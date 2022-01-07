@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ProdutoControlador;
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +14,33 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/produtos',[ProdutoControlador::class,'index']);
+
+Route::get('/negado',function(){
+    return response("Acesso negado!");
+})->name('negado')->middleware('produto');
+
+Route::post('/login', function(Request $request){
+    $login_ok = false;
+    switch($request->input('user')){
+        case 'jao':
+            $login_ok = $request->input('passwd') === 'senhajoao';
+            break;
+        case 'marcus':
+            $login_ok = $request->input('passwd') === 'senhajoao';
+            break;
+        case 'default':
+            $login_ok = false;
+            break;
+    }
+    if ($login_ok) {
+        $login = ['user' => $request->input('user')];
+        $request->session()->put('login', $login);
+        return response('Login Ok', 200);
+    }
+    else {
+        $request->session()->flush();
+        return response("Erro no Login", 404);
+    }
 });
+
