@@ -22,9 +22,11 @@ Route::get('/negado',function(){
 
 Route::post('/login', function(Request $request){
     $login_ok = false;
+    $admin = false;
     switch($request->input('user')){
         case 'jao':
             $login_ok = $request->input('passwd') === 'senhajoao';
+            $admin = true;
             break;
         case 'marcus':
             $login_ok = $request->input('passwd') === 'senhajoao';
@@ -43,4 +45,9 @@ Route::post('/login', function(Request $request){
         return response("Erro no Login", 404);
     }
 });
+
+Route::get('/logout', function(Request $request){
+    $request->session()->flush();
+    return response('Logout Ok', 200);
+})->middleware('produto');
 
